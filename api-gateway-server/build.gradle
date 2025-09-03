@@ -14,10 +14,6 @@ java {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
 ext {
     set('springCloudVersion', "2025.0.0")
 }
@@ -29,6 +25,8 @@ dependencyManagement {
 }
 
 dependencies {
+	// Domain-Model
+	implementation 'com.github.DongHyeonKa:synapse-domain-model:1.0.9'
 	// Spring API-Gateway
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
     // Redis
