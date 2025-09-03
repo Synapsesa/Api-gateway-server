@@ -1,0 +1,35 @@
+server:
+  port: 1000
+
+spring:
+    main:
+        web-application-type: reactive
+  
+    application:
+        name: api-gateway-server
+  
+    profiles:
+        default: local
+    
+    config:
+        import:
+            - security/application-jwt.yml
+
+management:
+    server:
+        port: 6000
+    endpoints:
+        web:
+          exposure:
+            include: health,info,prometheus,mappings, metrics
+    endpoint:
+        health:
+          show-details: always
+    prometheus:
+      metrics:
+        export:
+          enabled: true
+    metrics:
+      tags:
+        application: ${spring.application.name}
+        

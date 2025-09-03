@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+    gateway:
+      default-filters:
+        - RemoveRequestHeader=Cookie
+      routes:
+      - id: account-service
+        # uri: lb://account-service
+        uri: http://localhost:1001
+        predicates:
+          - Path=/auth/**
+        filters:
+          - RewritePath=/auth/(?<segment>.*), /api/accounts/${segment}
+      - id: payment-service
+        # uri: lb://payment-service
+        uri: http://localhost:1002
+        predicates:
+          - Path=/payment/**
+        filters:
+          - RewritePath=/payment/(?<segment>.*), /api/payments/${segment}
+      - id: chat-service
+        # uri: lb://chat-service
+        uri: http://localhost:1003
+        predicates:
+          - Path=/chat/**
+        filters:
+          - RewritePath=/chat/(?<segment>.*), /api/chat/${segment}
