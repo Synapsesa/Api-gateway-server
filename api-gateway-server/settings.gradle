@@ -1,0 +1,19 @@
+rootProject.name = 'api-gateway-server'
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/DongHyeonKa/Synapse-Library")
+
+            credentials {
+                username = providers.gradleProperty("GITHUB_USERNAME").getOrNull()
+                password = providers.gradleProperty("GITHUB_LAZY_TOKEN").getOrNull()
+            }
+        }
+    }
+}
