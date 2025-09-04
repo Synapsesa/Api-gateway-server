@@ -37,26 +37,26 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('api_gateway_server/**/*.gradle*', 'api_gateway_server/**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('api-gateway-server/**/*.gradle*', 'api-gateway-server/**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
       - name: gradlew 실행 권한 부여
-        working-directory: api_gateway_server
+        working-directory: api-gateway-server
         run: chmod +x ./gradlew
 
       - name: Gradle로 테스트 실행
-        working-directory: api_gateway_server
+        working-directory: api-gateway-server
         run: ./gradlew --info test
 
       - name: 테스트 결과 리포트
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: 'api_gateway_server/build/test-results/test/TEST-*.xml'
+          files: 'api-gateway-server/build/test-results/test/TEST-*.xml'
       
       - name: 테스트 결과 게시
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          report_paths: 'api_gateway_server/build/test-results/test/TEST-*.xml'
+          report_paths: 'api-gateway-server/build/test-results/test/TEST-*.xml'
