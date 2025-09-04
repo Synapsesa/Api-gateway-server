@@ -31,7 +31,10 @@ public enum ExceptionType {
     
     // 500 Internal Server Error
     INTERNAL_SERVER_ERRORS("S001", "Internal Server Error", INTERNAL_SERVER_ERROR),
-    RATE_LIMIT_CHECK_FAILED("S002", "Failed to Check Rate Limit", INTERNAL_SERVER_ERROR);
+    RATE_LIMIT_CHECK_FAILED("S002", "Failed to Check Rate Limit", INTERNAL_SERVER_ERROR),
+
+    // 503 Service Unavailable
+    SERVICE_UNAVAILABLES("S001", "Service Temporarily Unavailable", SERVICE_UNAVAILABLE);
     
     private final String code;
     private final String title;

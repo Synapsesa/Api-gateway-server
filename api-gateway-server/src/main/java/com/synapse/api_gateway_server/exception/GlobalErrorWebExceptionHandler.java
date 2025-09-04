@@ -9,6 +9,7 @@ import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -31,26 +32,12 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     }
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
-        Map<String, Object> errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
-        Throwable error = getError(request);
+        final Map<String, Object> errorPropertiesMap = getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        
+        int statusCode = (int) errorPropertiesMap.getOrDefault("status", 500);
 
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        log.error("Global error occurred: {}", error.getMessage(), error);
-
-        return ServerResponse
-            .status(status)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(new ErrorResponse(
-                status.value(),
-                error.getMessage(),
-                request.path()
-            ));
+        return ServerResponse.status(HttpStatus.valueOf(statusCode))
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .bodyValue(BodyInserters.fromValue(errorPropertiesMap));
     }
-
-    private record ErrorResponse(
-        int status,
-        String message,
-        String path
-    ) {}
 }
