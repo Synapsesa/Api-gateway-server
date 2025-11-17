@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
+import com.synapse.api_gateway_server.dto.RateLimitDecision;
 import com.synapse.api_gateway_server.dto.RateLimitPolicy;
 import com.synapse.api_gateway_server.dto.RateLimitResponse;
 import com.synapse.api_gateway_server.exception.ExceptionType;
@@ -38,13 +39,24 @@ public class CustomRedisRateLimiter implements RateLimiter {
         return redisTemplate.execute(script, keys, args)
                 .next() // 이 스크립트는 단 하나의 결과만 필요해 -> 공식문서와는 다르게 하나의 결과를 반환하도록 lua 스크립트를 작성하였기에 reduce 는 과함.. 결과를 반환해도 이 값이 음수인지에 따라 판단이 가능함 (물론 filter 단에서)
                 .map(results -> {
+                    long decisionCode = results.get(0);
                     Long tokensLeft = results.get(1);
                     Long totalRequests = results.get(2);
+
+                    RateLimitDecision decision;
+                    if (decisionCode == 1L) {
+                        decision = RateLimitDecision.ALLOWED;
+                    } else if (decisionCode == 2L) {
+                        decision = RateLimitDecision.DENIED_MAX_TOTAL;
+                    } else {
+                        decision = RateLimitDecision.DENIED_RATE_LIMIT;
+                    }
 
                     return RateLimitResponse.from(
                             tokensLeft,
                             totalRequests,
-                            policy);
+                            policy,
+                            decision);
                 })
                 .onErrorResume(throwable -> {
                     log.error("Rate limit check failed for key {}: {}", keys, throwable.getMessage(), throwable);

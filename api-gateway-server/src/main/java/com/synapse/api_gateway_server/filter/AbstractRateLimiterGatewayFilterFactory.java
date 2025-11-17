@@ -9,16 +9,17 @@ import com.synapse.api_gateway_server.exception.ExceptionType;
 import com.synapse.api_gateway_server.exception.GlobalRateLimitException;
 import com.synapse.api_gateway_server.ratelimit.limit.RateLimiter;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
-public abstract class AbstractRateLimiterGatewayFilterFactory extends AbstractGatewayFilterFactory<AbstractRateLimiterGatewayFilterFactory.Config> {
+public abstract class AbstractRateLimiterGatewayFilterFactory<C> extends AbstractGatewayFilterFactory<C> {
     private final RateLimiter rateLimiter;
 
-    protected Mono<Void> checkRateLimit(String key, RateLimitPolicy policy, ServerWebExchange exchange, GatewayFilterChain chain) {
+    public AbstractRateLimiterGatewayFilterFactory(RateLimiter rateLimiter, Class<C> configClass) {
+        super(configClass);
+        this.rateLimiter = rateLimiter;
+    }
+
+    protected Mono<Void> checkRateLimit(String key, RateLimitPolicy policy, ServerWebExchange exchange, GatewayFilterChain chain, boolean queueAble) {
         return rateLimiter.check(key, policy)
                 .flatMap(response -> {
                     exchange.getResponse().getHeaders().add(
@@ -34,11 +35,5 @@ public abstract class AbstractRateLimiterGatewayFilterFactory extends AbstractGa
                         return Mono.error(new GlobalRateLimitException(ExceptionType.RATE_LIMIT_CHECK_FAILED, ExceptionType.RATE_LIMIT_CHECK_FAILED.getTitle(), null));
                     }
                 });
-    }
-
-    @Setter
-    @Getter
-    public static class Config {
-        private RateLimitPolicy policy;
     }
 }

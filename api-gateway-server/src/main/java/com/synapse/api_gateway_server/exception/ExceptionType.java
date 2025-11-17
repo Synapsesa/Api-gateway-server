@@ -28,6 +28,8 @@ public enum ExceptionType {
     // 429 Too Many Requests
     IP_RATE_LIMIT_EXCEEDED("R002", "IP Rate Limit Exceeded", TOO_MANY_REQUESTS),
     GLOBAL_RATE_LIMIT_EXCEEDED("R003", "Global Rate Limit Exceeded", TOO_MANY_REQUESTS),
+    RATE_LIMIT_EXCEEDED("R004", "Rate Limit Exceeded", TOO_MANY_REQUESTS),
+    TOTAL_LIMIT_EXCEEDED("R005", "Total Limit Exceeded", TOO_MANY_REQUESTS),
     
     // 500 Internal Server Error
     INTERNAL_SERVER_ERRORS("S001", "Internal Server Error", INTERNAL_SERVER_ERROR),

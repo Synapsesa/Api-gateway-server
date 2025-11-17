@@ -7,26 +7,29 @@ import java.util.Optional;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
+import com.synapse.api_gateway_server.dto.RateLimitPolicy;
 import com.synapse.api_gateway_server.ratelimit.limit.RateLimiter;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class IpRateLimiterGatewayFilterFactory extends AbstractRateLimiterGatewayFilterFactory {
+public class IpRateLimiterGatewayFilterFactory extends AbstractRateLimiterGatewayFilterFactory<IpRateLimiterGatewayFilterFactory.Config> {
     public static final String X_FORWARDED_FOR = "X-Forwarded-For";
     public static final String X_REAL_IP = "X-Real-IP";
     public static final String X_ORIGINATING_IP = "X-Originating-IP";
     private static final String UNKNOWN_IP = "unknown";
     
     public IpRateLimiterGatewayFilterFactory(RateLimiter rateLimiter) {
-        super(rateLimiter);
+        super(rateLimiter, Config.class);
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String clientIp = extractClientIp(exchange.getRequest());
-            return checkRateLimit(clientIp, config.getPolicy(), exchange, chain);
+            return checkRateLimit(clientIp, config.getPolicy(), exchange, chain, false);
         };
     }
 
@@ -83,5 +86,11 @@ public class IpRateLimiterGatewayFilterFactory extends AbstractRateLimiterGatewa
                 !ip.equals("0:0:0:0:0:0:0:1") &&
                 !ip.startsWith("127.") &&
                 !ip.equals("::1");
+    }
+
+    @Setter
+    @Getter
+    public static class Config {
+        private RateLimitPolicy policy;
     }
 }
