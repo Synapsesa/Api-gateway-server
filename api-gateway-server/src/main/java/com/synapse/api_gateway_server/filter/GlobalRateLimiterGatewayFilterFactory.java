@@ -3,6 +3,7 @@ package com.synapse.api_gateway_server.filter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 
 import com.synapse.api_gateway_server.dto.RateLimitPolicy;
+import com.synapse.api_gateway_server.exception.ExceptionType;
 import com.synapse.api_gateway_server.ratelimit.limit.RateLimiter;
 
 import lombok.Getter;
@@ -19,7 +20,13 @@ public class GlobalRateLimiterGatewayFilterFactory extends AbstractRateLimiterGa
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            return checkRateLimit(GLOBAL_KEY, config.getPolicy(), exchange, chain, false);
+            return checkRateLimit(
+                GLOBAL_KEY,
+                config.getPolicy(),
+                exchange,
+                chain,
+                ExceptionType.GLOBAL_RATE_LIMIT_EXCEEDED,
+                ExceptionType.TOTAL_LIMIT_EXCEEDED);
         };
     }
 

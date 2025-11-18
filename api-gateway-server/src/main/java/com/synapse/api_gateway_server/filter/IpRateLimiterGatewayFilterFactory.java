@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import com.synapse.api_gateway_server.dto.RateLimitPolicy;
+import com.synapse.api_gateway_server.exception.ExceptionType;
 import com.synapse.api_gateway_server.ratelimit.limit.RateLimiter;
 
 import lombok.Getter;
@@ -29,7 +30,13 @@ public class IpRateLimiterGatewayFilterFactory extends AbstractRateLimiterGatewa
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String clientIp = extractClientIp(exchange.getRequest());
-            return checkRateLimit(clientIp, config.getPolicy(), exchange, chain, false);
+            return checkRateLimit(
+                clientIp,
+                config.getPolicy(),
+                exchange,
+                chain,
+                ExceptionType.IP_RATE_LIMIT_EXCEEDED,
+                ExceptionType.TOTAL_LIMIT_EXCEEDED);
         };
     }
 
