@@ -10,31 +10,31 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ExceptionType {
 
-    // 400 Bad Request
-    INVALID_INPUT_VALUE("C001", "Invalid Input Value", BAD_REQUEST),
-    INVALID_AUTHORIZATION_HEADER("A001", "Invalid Authorization Header", BAD_REQUEST),
+    // Cxxx: Client / Config Errors
+    INVALID_INPUT_VALUE("C001", "잘못된 입력 값 / Invalid Input", BAD_REQUEST),
 
-    // 401 Unauthorized
-    UNAUTHENTICATED("A002", "Unauthenticated", UNAUTHORIZED),
-    JWT_TOKEN_EXPIRED("A003", "JWT Token Expired", UNAUTHORIZED),
+    // Axxx: Authentication & Authorization
+    INVALID_AUTHORIZATION_HEADER("A001", "잘못된 인증 헤더 / Invalid Authorization Header", BAD_REQUEST),
+    UNAUTHENTICATED("A002", "인증되지 않음 / Unauthenticated", UNAUTHORIZED),
+    JWT_TOKEN_EXPIRED("A003", "만료된 JWT 토큰 / JWT Token Expired", UNAUTHORIZED),
+    ACCESS_DENIED("A004", "접근 거부 / Access Denied", FORBIDDEN),
 
-    // 403 Forbidden
-    ACCESS_DENIED("A004", "Access Denied", FORBIDDEN),
+    // Gxxx: Gateway routing
+    ROUTE_NOT_FOUND("G001", "라우트 없음 / Route Not Found", NOT_FOUND),
 
-    // 404 Not Found
-    ROUTE_NOT_FOUND("R001", "Route Not Found", NOT_FOUND),
-    POLICY_NOT_FOUND("P001", "Policy Not Found", NOT_FOUND),
+    // Pxxx: Policy configuration
+    POLICY_NOT_FOUND("P001", "정책을 찾을 수 없음 / Policy Not Found", NOT_FOUND),
 
-    // 429 Too Many Requests
-    IP_RATE_LIMIT_EXCEEDED("R002", "IP Rate Limit Exceeded", TOO_MANY_REQUESTS),
-    GLOBAL_RATE_LIMIT_EXCEEDED("R003", "Global Rate Limit Exceeded", TOO_MANY_REQUESTS),
-    
-    // 500 Internal Server Error
-    INTERNAL_SERVER_ERRORS("S001", "Internal Server Error", INTERNAL_SERVER_ERROR),
-    RATE_LIMIT_CHECK_FAILED("S002", "Failed to Check Rate Limit", INTERNAL_SERVER_ERROR),
+    // Rxxx: Rate limiting
+    IP_RATE_LIMIT_EXCEEDED("R001", "IP 제한 초과 / IP Rate Limit Exceeded", TOO_MANY_REQUESTS),
+    GLOBAL_RATE_LIMIT_EXCEEDED("R002", "글로벌 제한 초과 / Global Rate Limit Exceeded", TOO_MANY_REQUESTS),
+    RATE_LIMIT_EXCEEDED("R003", "구독 제한 초과 / Subscription Rate Limit Exceeded", TOO_MANY_REQUESTS),
+    TOTAL_LIMIT_EXCEEDED("R004", "총량 제한 초과 / Total Limit Exceeded", TOO_MANY_REQUESTS),
 
-    // 503 Service Unavailable
-    SERVICE_UNAVAILABLES("S001", "Service Temporarily Unavailable", SERVICE_UNAVAILABLE);
+    // Sxxx: System / Infra
+    INTERNAL_SERVER_ERRORS("S001", "내부 서버 오류 / Internal Server Error", INTERNAL_SERVER_ERROR),
+    RATE_LIMIT_CHECK_FAILED("S002", "레이트리밋 검증 실패 / Rate Limit Check Failed", INTERNAL_SERVER_ERROR),
+    SERVICE_UNAVAILABLES("S003", "서비스 일시 중단 / Service Temporarily Unavailable", SERVICE_UNAVAILABLE);
     
     private final String code;
     private final String title;
